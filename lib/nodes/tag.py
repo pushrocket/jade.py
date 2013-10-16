@@ -5,13 +5,14 @@ from .. inlineTags import inlineTags
 
 class Tag(Attrs):
 
-  def __init__(self, name, block):
+  def __init__(self, name, block = None):
     '''Initialize a `Tag` node with the given tag `name` and optional `block`.'''
 
     self.name = name
     self.attrs = []
     self.block = block or Block()
     self.textOnly = False
+    self._self_closing = False
 
   def clone(self):
     '''Clone this tag'''
@@ -35,7 +36,7 @@ class Tag(Attrs):
       if node.isBlock:
         return all([isInline(n) for n in node.nodes])
 
-      return (hasattr(node, 'isText') and node.isText) or (hasttr(node, 'isInline') and node.isInline())
+      return (hasattr(node, 'isText') and node.isText) or (hasattr(node, 'isInline') and node.isInline())
 
     # empty tag
     if len(nodes) is 0:
@@ -48,10 +49,21 @@ class Tag(Attrs):
     # Multi-line inline-only tag
     if all([isInline(n) for n in node.nodes]):
       for i in range(1, len(nodes)):
-        if(nodes[i-1].isText and nodes[i].isText):
+        previous = nodes[i-1]
+        node = nodes[i]
+
+        if hasattr(previous, 'isText') and previous.isText and hasattr(node, 'isText') and node.isText:
           return False
 
       return True
 
     # mixed tag
     return False
+
+  @property
+  def self_closing(self):
+    return self._self_closing
+
+  @self_closing.setter
+  def self_closing(self, value):
+    self._self_closing = value
