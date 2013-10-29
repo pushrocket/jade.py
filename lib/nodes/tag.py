@@ -1,6 +1,6 @@
 from . attrs import Attrs
 from . block import Block
-from .. inlineTags import inlineTags
+from .. inlineTags import inline_tags
 # from . text import Text
 
 class Tag(Attrs):
@@ -11,7 +11,7 @@ class Tag(Attrs):
     self.name = name
     self.attrs = []
     self.block = block or Block()
-    self.textOnly = False
+    self.text_only = False
     self._self_closing = False
 
   def clone(self):
@@ -20,23 +20,23 @@ class Tag(Attrs):
     c = Tag(self.name, self.block.clone())
     c.line = self.line
     c.attrs = self.attrs.copy()
-    c.textOnly = self.textOnly
+    c.text_only = self.text_only
 
-  def isInline(self):
+  def is_inline(self):
     '''Check if this tag is an inline tag'''
 
     return self.name in inlineTags
 
-  def canInline(self):
+  def can_inline(self):
     '''Check if this tag's contents can be inlined.  Used for pretty printing.'''
 
     nodes = self.block.nodes
 
-    def isInline(node):
-      if node.isBlock:
-        return all([isInline(n) for n in node.nodes])
+    def is_inline(node):
+      if node.is_block:
+        return all([is_inline(n) for n in node.nodes])
 
-      return (hasattr(node, 'isText') and node.isText) or (hasattr(node, 'isInline') and node.isInline())
+      return (hasattr(node, 'is_text') and node.is_text) or (hasattr(node, 'is_inline') and node.is_inline())
 
     # empty tag
     if len(nodes) is 0:
@@ -44,15 +44,15 @@ class Tag(Attrs):
 
     # text-only or inline-only tag
     if len(nodes) is 1:
-      return isInline(nodes[0])
+      return is_inline(nodes[0])
 
     # Multi-line inline-only tag
-    if all([isInline(n) for n in node.nodes]):
+    if all([is_inline(n) for n in node.nodes]):
       for i in range(1, len(nodes)):
         previous = nodes[i-1]
         node = nodes[i]
 
-        if hasattr(previous, 'isText') and previous.isText and hasattr(node, 'isText') and node.isText:
+        if hasattr(previous, 'is_text') and previous.is_text and hasattr(node, 'is_text') and node.is_text:
           return False
 
       return True

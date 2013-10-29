@@ -4,7 +4,7 @@ from . lexer import Lexer
 from . doctypes import doctypes
 
 # Tags that may not contain tags.
-textOnly = ['script', 'style'];
+text_only = ['script', 'style'];
 
 class Parser(object):
   '''Parser class'''
@@ -31,10 +31,19 @@ class Parser(object):
       return self.contexts.pop()
 
   def advance(self):
+    ''' Return the next token object.
+
+    :returns: a token
+    '''
     return self.lexer.advance()
 
   def skip(self, n):
-    pass
+    ''' Skip `n` tokens.
+
+    :param n: number of tokens to skip
+    '''
+    for i in range(n):
+      self.advance()
 
   def peek(self):
     return self.lookahead(1)

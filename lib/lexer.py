@@ -13,11 +13,11 @@ class Lexer(object):
     options = options or {}
     self.input = re.sub('\r\n|\r', '\n', str)
     self.colons = 'colons' in options.keys() and options['colons']
-    self.deferredTokens = []
-    self.lastIndents = 0
+    self.deferred_tokens = []
+    self.last_indents = 0
     self.lineno = 1
     self.stash = []
-    self.indentStack = []
+    self.indent_stack = []
     self.indentRe = None
     self.pipeless = False
 
@@ -100,8 +100,8 @@ class Lexer(object):
     if len(self.input) > 0:
       return
 
-    if len(self.indentStack) > 0:
-      self.indentStack.pop(0);
+    if len(self.indent_stack) > 0:
+      self.indent_stack.pop(0);
       return self.tok('outdent')
     else:
       return self.tok('eos')

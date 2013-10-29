@@ -1,4 +1,4 @@
-inlineTags = [
+inline_tags = [
   'a'
   , 'abbr'
   , 'acronym'
